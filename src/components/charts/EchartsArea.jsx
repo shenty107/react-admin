@@ -10,7 +10,7 @@ let date = [];
 let data = [];
 
 let req = 'Graphite_Report.10-10-31-166.com.qunhe.instdeco.plan.fusing.ListRoomTypesCommand.time.count';
-axios.get('http://10.1.13.131/render',{params: {
+axios.get('/render',{params: {
     target: req,
     format: 'json',
     from: '-10min',
