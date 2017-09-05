@@ -4,18 +4,28 @@
 import React from 'react';
 import ReactEcharts from 'echarts-for-react';
 import echarts from 'echarts';
+import axios from 'axios';
 
-let base = +new Date(1968, 9, 3);
-let oneDay = 24 * 3600 * 1000;
 let date = [];
+let data = [];
 
-let data = [Math.random() * 300];
-
-for (var i = 1; i < 20000; i++) {
-    var now = new Date(base += oneDay);
-    date.push([now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'));
-    data.push(Math.round((Math.random() - 0.5) * 20 + data[i - 1]));
-}
+let req = 'Graphite_Report.10-10-31-166.com.qunhe.instdeco.plan.fusing.ListRoomTypesCommand.time.count';
+axios.get('http://10.1.13.131/render',{params: {
+    target: req,
+    format: 'json',
+    from: '-10min',
+}} )
+    .then(function (response) {
+        console.log(response);
+        for (var i = 0 ; i < response.datapoints.length; i++)
+        {
+            date.push(response.datapoints[i][0]);
+            data.push(response.datapoints[i][0]);
+        }
+    })
+    .catch(function (error) {
+        // throw error
+    });
 
 const option = {
     tooltip: {
