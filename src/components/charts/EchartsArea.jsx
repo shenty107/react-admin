@@ -52,6 +52,7 @@ class EchartsArea extends React.Component {
                 console.log(date);
                 option.title.text = parsedName.funcName;
                 option.series.name = parsedName.detailName;
+
             }
         )
             .catch(function (error) {

@@ -6,6 +6,18 @@ import {Button, Card, Col, Dropdown, Icon, Menu, Row} from 'antd';
 import GraphiteChart from "./GraphiteChart";
 
 class Echarts extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.chartPointer = '';
+
+        this.refCallback = this.refCallback.bind(this);
+    }
+
+    componentDidMount() {
+        console.log(this);
+    }
+
     handleMenuClick = (e) => {
         switch (e.key) {
             case '1':
@@ -22,20 +34,10 @@ class Echarts extends React.Component {
         }
     };
 
-    constructor(props) {
-        super(props);
-        this.chartPointer = '';
-
-        this.refCallback = this.refCallback.bind(this);
-    }
-
-    componentDidMount() {
-        console.log(this);
-    }
-
     refCallback(instance) {
         this.chartPointer = instance;
     }
+
     render() {
         const menu = (
             <Menu onClick={this.handleMenuClick}>
@@ -53,7 +55,7 @@ class Echarts extends React.Component {
                                 {
                                     <Dropdown overlay={menu}>
                                         <Button>
-                                            起始时间 <Icon type="down"/>
+                                            起始时间 <Icon type="down" />
                                         </Button>
                                     </Dropdown>
                                 }

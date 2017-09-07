@@ -159,6 +159,7 @@ class GraphiteChart extends React.Component {
 
                     instance.drawOption.xAxis.data = date;
                     instance.drawOption.series[0].data = data;
+                    instance.drawOption.dataZoom = eChart.getOption().dataZoom;
                     eChart.setOption(instance.drawOption, {
                         notMerge: true,
                         lazyUpdate: false,
