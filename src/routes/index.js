@@ -10,7 +10,6 @@ import BasicTable from '../components/tables/BasicTables';
 import AdvancedTable from '../components/tables/AdvancedTables';
 import AsynchronousTable from '../components/tables/AsynchronousTable';
 import Login from '../components/pages/Login';
-import Echarts from '../components/charts/Echarts';
 import Recharts from '../components/charts/Recharts';
 import Icons from '../components/ui/Icons';
 import Buttons from '../components/ui/Buttons';
@@ -27,6 +26,7 @@ import BasicAnimations from '../components/animation/BasicAnimations';
 import ExampleAnimations from '../components/animation/ExampleAnimations';
 import AuthBasic from '../components/auth/Basic';
 import RouterEnter from '../components/auth/RouterEnter';
+import {GraphController} from "../components/charts/GraphController";
 
 const Wysiwyg = (location, cb) => {     // 按需加载富文本配置
     require.ensure([], require => {
@@ -56,7 +56,7 @@ export default class CRouter extends Component {
                             <Route path={'asynchronousTable'} components={AsynchronousTable} />
                         </Route>
                         <Route path={'chart'}>
-                            <Route path={'echarts'} component={Echarts} />
+                            <Route path={'echarts'} component={GraphController} />
                             <Route path={'recharts'} component={Recharts} />
                         </Route>
                         <Route path={'ui'}>

@@ -2,7 +2,7 @@
  * Created by hao.cheng on 2017/4/13.
  */
 import React, { Component } from 'react';
-import { Layout, Menu, Icon } from 'antd';
+import { Layout, Menu, Icon,Switch,Card} from 'antd';
 import { Link } from 'react-router';
 const { Sider } = Layout;
 const SubMenu = Menu.SubMenu;
@@ -58,10 +58,13 @@ class SiderCustom extends Component {
                 collapsed={this.props.collapsed}
                 style={{overflowY: 'auto'}}
             >
-                <div className="logo" />
+                <br />
+
+                <br />
+
                 <Menu
                     onClick={this.menuClick}
-                    theme="dark"
+                    theme="light"
                     mode={this.state.mode}
                     selectedKeys={[this.state.selectedKey]}
                     openKeys={[this.state.openKey]}
@@ -132,6 +135,7 @@ class SiderCustom extends Component {
                         <Menu.Item key="/app/auth/routerEnter"><Link to={'/app/auth/routerEnter'}>路由拦截</Link></Menu.Item>
                     </SubMenu>
                 </Menu>
+                <Card title="熔断降级总开关" extra={<Switch onChange={this.changeTheme} checkedChildren="开" unCheckedChildren="关" />} />
                 <style>
                     {`
                     #nprogress .spinner{

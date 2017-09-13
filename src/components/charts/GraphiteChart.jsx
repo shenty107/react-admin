@@ -3,6 +3,7 @@ import axios from 'axios';
 import ReactEcharts from 'echarts-for-react';
 import echarts from 'echarts';
 import PropTypes from 'prop-types';
+import {Spin} from 'antd';
 
 class GraphiteChart extends React.Component {
     constructor(props) {
@@ -13,8 +14,10 @@ class GraphiteChart extends React.Component {
             timeFrom: '-15min',
             timeUntil: '',
             flashTime: 30000,
+            loading: true,
         };
-
+        this.data = [];
+        this.date = [];
         this.drawOption = {
             tooltip: {
                 trigger: 'axis',
@@ -24,7 +27,7 @@ class GraphiteChart extends React.Component {
             },
             title: {
                 left: 'center',
-                text: this.props.targetFuncName,
+                text: [this.props.targetFuncName, this.props.detailName].join(' - '),
             },
             toolbox: {
                 feature: {
@@ -95,6 +98,9 @@ class GraphiteChart extends React.Component {
         this.tick = this.tick.bind(this);
         this.setTimeFrom = this.setTimeFrom.bind(this);
         this.setTimeUntil = this.setTimeUntil.bind(this);
+        this.getMeterData = this.getMeterData.bind(this);
+        this.onChartReady = this.onChartReady.bind(this);
+        this.renderController = this.renderController.bind(this);
     }
 
     componentDidMount() {
@@ -114,22 +120,29 @@ class GraphiteChart extends React.Component {
         this.update();
     }
 
-    setTimeFrom(mtimeFrom) {
+    setTimeFrom(mTimeFrom) {
         this.setState({
-            timeFrom: mtimeFrom
+            timeFrom: mTimeFrom
         }, this.update);
     }
 
-    setTimeUntil(mtimeUntil) {
+    setTimeUntil(mTimeUntil) {
         this.setState({
-            timeUntil: mtimeUntil
+            timeUntil: mTimeUntil
         }, this.update);
+
     }
 
-    update() {
-        let eChart = this.Echarts.getEchartsInstance();
+    getMeterData(callback) {
+        console.log('called - getmeter');
+        if (this.Echarts !== undefined){
+            // console.log(this.Echarts.getEchartsInstance().getOption());
+            console.log(this.drawOption);
+        }
+        this.data = [];
+        this.date = [];
         let instance = this;
-        axios.get(this.props.graphiteServerIP + '/render', {
+        axios.get('http://' + this.props.graphiteServerIP + '/getmeterdata', {
             params: {
                 target: this.props.fullName,
                 format: this.props.askFormat,
@@ -137,55 +150,95 @@ class GraphiteChart extends React.Component {
                 until: this.state.timeUntil,
             }
         }).then(function (response) {
-                let res = JSON.parse(response.request.responseText);
-                for (let i = 0; i < res.length; i++) {
-                    let dataJSON = res[i];
-                    let data = [];
-                    let date = [];
-                    // console.log(data);
-                    // console.log(date);
-                    for (let j = 0; j < dataJSON.datapoints.length; j++) {
-                        let dateNow = new Date(1970, 1, 1);
-                        let tempDate = new Date(1970, 1, 1);
-                        tempDate.setTime(dataJSON.datapoints[j][1] * 1000);
-                        dateNow.setTime(Date.now());
-                        data.push(dataJSON.datapoints[j][0]);
-                        if (dateNow.getMonth() === tempDate.getMonth() && dateNow.getDate() === tempDate.getDate()) {
-                            date.push([tempDate.getHours(), tempDate.getMinutes()].join(':'));
+            let res = JSON.parse(response.request.responseText);
+            for (let i = 0; i < res.length; i++) {
+                let dataJSON = res[i];
+                for (let j = 0; j < dataJSON.datapoints.length; j++) {
+                    let dateNow = new Date(1970, 1, 1);
+                    let tempDate = new Date(1970, 1, 1);
+                    tempDate.setTime(dataJSON.datapoints[j][1] * 1000);
+                    dateNow.setTime(Date.now());
+                    if (dataJSON.datapoints[j][0] !== "-1") {
+                        instance.data.push(dataJSON.datapoints[j][0]);
+                    } else {
+                        instance.data.push(null);
+                    }
+                    if (dateNow.getMonth() === tempDate.getMonth() && dateNow.getDate() === tempDate.getDate()) {
+                        if (parseInt(tempDate.getMinutes()) < 10){
+                            instance.date.push([tempDate.getHours(), '0'+tempDate.getMinutes()].join(':'));
                         } else {
-                            date.push([[tempDate.getMonth() + 1, tempDate.getDate()].join('/'), [tempDate.getHours(), tempDate.getMinutes()].join(':')].join(' '));
+                            instance.date.push([tempDate.getHours(), tempDate.getMinutes()].join(':'));
+                        }
+
+                    } else {
+                        if (parseInt(tempDate.getMinutes()) < 10){
+                            instance.date.push([[tempDate.getMonth() + 1, tempDate.getDate()].join('/'), [tempDate.getHours(), '0'+tempDate.getMinutes()].join(':')].join(' '));
+
+                        } else {
+                            instance.date.push([[tempDate.getMonth() + 1, tempDate.getDate()].join('/'), [tempDate.getHours(), tempDate.getMinutes()].join(':')].join(' '));
+
                         }
                     }
-
-                    instance.drawOption.xAxis.data = date;
-                    instance.drawOption.series[0].data = data;
-                    instance.drawOption.dataZoom = eChart.getOption().dataZoom;
-                    eChart.setOption(instance.drawOption, {
-                        notMerge: true,
-                        lazyUpdate: false,
-                        silent: false
-                    });
                 }
             }
-        ).catch(function (error) {
-            // throw error
+            callback();
+        }).catch(function (error) {
+            return false;
+        });
+
+        return true;
+    }
+
+    update() {
+        console.log('called - update');
+        let instance = this;
+        this.getMeterData(function () {
+            let tempOption = instance.drawOption;
+            tempOption.xAxis.data = instance.date;
+            tempOption.series[0].data = instance.data;
+            // tempOption.dataZoom = eChart.getOption().dataZoom;
+            tempOption.title.text = [instance.props.targetFuncName, instance.props.detailName].join(' - ');
+            tempOption.series.name = instance.props.detailName;
+            instance.drawOption = tempOption;
+            instance.setState({
+                loading:false,
+            });
         });
     }
 
-    render() {
+    onChartReady(echart){
+        this.Echarts = echart;
+        console.log('ready');
+        // this.update(echart);
+    }
+    renderController(){
         let onEvents = {
             'restore': this.onRestore
         };
+        if (this.state.loading){
+            return (<Spin>loading...</Spin>);
+        } else {
+            if (this.Echarts !== undefined){
+                this.Echarts.setOption(this.drawOption);
+            }
+            return(
+                <ReactEcharts
+                    option={this.drawOption}
+                    // ref={(c) => {
+                    //     this.Echarts = c;
+                    // }}
+                    style={{height: '300px', width: '100%'}}
+                    className={'react_for_echarts'}
+                    onEvents={onEvents}
+                    onChartReady={this.onChartReady}
+                />
+            )
+        }
+    }
+    render() {
+        console.log('called - render');
         return (
-            <ReactEcharts
-                option={this.drawOption}
-                ref={(c) => {
-                    this.Echarts = c;
-                }}
-                style={{height: '300px', width: '100%'}}
-                className={'react_for_echarts'}
-                onEvents={onEvents}
-            />
+            this.renderController()
         )
     }
 }
