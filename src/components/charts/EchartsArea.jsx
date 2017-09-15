@@ -5,7 +5,7 @@ import React from 'react';
 import ReactEcharts from 'echarts-for-react';
 import echarts from 'echarts';
 import axios from 'axios';
-import {parseGraphiteMessage} from "../../utils/nameParse";
+import {parseGraphiteMessage} from "../../utils/constants";
 
 let date = [];
 let data = [];

@@ -49,7 +49,7 @@ class GraphiteChart extends React.Component {
             },
             dataZoom: [{
                 type: 'inside',
-                start: 50,
+                start: 0,
                 end: 100
             }, {
                 start: 0,
@@ -134,10 +134,8 @@ class GraphiteChart extends React.Component {
     }
 
     getMeterData(callback) {
-        console.log('called - getmeter');
         if (this.Echarts !== undefined){
             // console.log(this.Echarts.getEchartsInstance().getOption());
-            console.log(this.drawOption);
         }
         this.data = [];
         this.date = [];
@@ -153,6 +151,7 @@ class GraphiteChart extends React.Component {
             let res = JSON.parse(response.request.responseText);
             for (let i = 0; i < res.length; i++) {
                 let dataJSON = res[i];
+                let isNull = true;
                 for (let j = 0; j < dataJSON.datapoints.length; j++) {
                     let dateNow = new Date(1970, 1, 1);
                     let tempDate = new Date(1970, 1, 1);
@@ -160,18 +159,19 @@ class GraphiteChart extends React.Component {
                     dateNow.setTime(Date.now());
                     if (dataJSON.datapoints[j][0] !== "-1") {
                         instance.data.push(dataJSON.datapoints[j][0]);
+                        isNull = false;
                     } else {
-                        instance.data.push(null);
+                        instance.data.push('-');
                     }
                     if (dateNow.getMonth() === tempDate.getMonth() && dateNow.getDate() === tempDate.getDate()) {
-                        if (parseInt(tempDate.getMinutes()) < 10){
+                        if (parseInt(tempDate.getMinutes(),10) < 10){
                             instance.date.push([tempDate.getHours(), '0'+tempDate.getMinutes()].join(':'));
                         } else {
                             instance.date.push([tempDate.getHours(), tempDate.getMinutes()].join(':'));
                         }
 
                     } else {
-                        if (parseInt(tempDate.getMinutes()) < 10){
+                        if (parseInt(tempDate.getMinutes(),10) < 10){
                             instance.date.push([[tempDate.getMonth() + 1, tempDate.getDate()].join('/'), [tempDate.getHours(), '0'+tempDate.getMinutes()].join(':')].join(' '));
 
                         } else {
@@ -179,6 +179,9 @@ class GraphiteChart extends React.Component {
 
                         }
                     }
+                }
+                if (isNull){
+                    instance.data[0] = '0';
                 }
             }
             callback();
@@ -190,15 +193,16 @@ class GraphiteChart extends React.Component {
     }
 
     update() {
-        console.log('called - update');
         let instance = this;
         this.getMeterData(function () {
             let tempOption = instance.drawOption;
             tempOption.xAxis.data = instance.date;
             tempOption.series[0].data = instance.data;
-            // tempOption.dataZoom = eChart.getOption().dataZoom;
             tempOption.title.text = [instance.props.targetFuncName, instance.props.detailName].join(' - ');
             tempOption.series.name = instance.props.detailName;
+            if (instance.Echarts!==undefined){
+                tempOption.dataZoom = instance.Echarts.getOption().dataZoom;
+            }
             instance.drawOption = tempOption;
             instance.setState({
                 loading:false,
@@ -208,7 +212,7 @@ class GraphiteChart extends React.Component {
 
     onChartReady(echart){
         this.Echarts = echart;
-        console.log('ready');
+        this.Echarts.setOption(this.drawOption);
         // this.update(echart);
     }
     renderController(){
@@ -236,7 +240,6 @@ class GraphiteChart extends React.Component {
         }
     }
     render() {
-        console.log('called - render');
         return (
             this.renderController()
         )

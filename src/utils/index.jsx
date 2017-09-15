@@ -2,6 +2,11 @@
  * Created by hao.cheng on 2017/4/28.
  */
 // 获取url的参数
+import axios from 'axios';
+
+let meterDataList = [];
+let updated = false;
+
 export const queryString = () => {
     let _queryString = {};
     const _query = window.location.search.substr(1);
@@ -18,4 +23,21 @@ export const queryString = () => {
         }
     });
     return _queryString;
+};
+
+export const isUpdated = () => {
+    return updated;
+};
+
+export const init = (ipAddress,callback) => {
+    axios.get('http://' + ipAddress + '/getmeterlist').then(function (response) {
+        meterDataList = JSON.parse(response.request.responseText);
+        updated = true;
+        callback();
+    }).catch(function (error) {
+        // throw error
+    });
+};
+export const getMeterDataList = () => {
+    return meterDataList;
 };

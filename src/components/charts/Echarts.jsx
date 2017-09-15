@@ -2,7 +2,7 @@
  * Created by hao.cheng on 2017/4/17.
  */
 import React from 'react';
-import {Button, Card, Col, Dropdown, Icon, Menu, Row} from 'antd';
+import {Button, Card, Col, Dropdown, Icon, Menu} from 'antd';
 import GraphiteChart from "./GraphiteChart";
 import PropTypes from 'prop-types';
 
@@ -51,10 +51,10 @@ class Echarts extends React.Component {
 
     generateGraph(){
         return (
-            <Row gutter={16}>
-                <Col className="gutter-row" md={24}>
+
+                <Col className="gutter-row" md={12}>
                     <div className="gutter-box">
-                        <Card title={this.props.serviceName} bordered={false} extra=
+                        <Card title={this.props.serviceName} bordered={'true'} extra=
                             {
                                 <Dropdown overlay={this.menu}>
                                     <Button>
@@ -75,7 +75,7 @@ class Echarts extends React.Component {
                         </Card>
                     </div>
                 </Col>
-            </Row>
+
         )
     }
 

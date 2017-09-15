@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Layout } from 'antd';
 import './style/index.less';
 import SiderCustom from './components/SiderCustom';
-import HeaderCustom from './components/HeaderCustom';
 import { receiveData } from './action';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -44,7 +43,6 @@ class App extends Component {
             <Layout className="ant-layout-has-sider">
                 {!responsive.data.isMobile && <SiderCustom path={this.props.location.pathname} collapsed={this.state.collapsed} />}
               <Layout>
-                <HeaderCustom toggle={this.toggle} user={auth.data || {}} router={router} path={this.props.location.pathname} />
                 <Content style={{ margin: '0 16px', overflow: 'initial' }}>
                   {this.props.children}
                 </Content>

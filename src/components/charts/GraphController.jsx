@@ -1,8 +1,12 @@
 import React from 'react';
 import Echarts from "./Echarts";
-import {getBackendServerIp} from "../../utils/nameParse";
-import axios from 'axios';
-import { TreeSelect } from 'antd';
+import {getBackendServerIp, getDefaultMeterValue} from "../../utils/constants";
+import { TreeSelect,Row } from 'antd';
+import {init,getMeterDataList,isUpdated} from "../../utils/index";
+import { Menu, Icon,Switch } from 'antd';
+import {SwitchController} from "../switch/SwitchController";
+const SubMenu = Menu.SubMenu;
+const MenuItemGroup = Menu.ItemGroup;
 const TreeNode = TreeSelect.TreeNode;
 
 export class GraphController extends React.Component {
@@ -11,36 +15,71 @@ export class GraphController extends React.Component {
         this.dataAvailable = [];
         this.state = {
             isLoaded: false,
-            value:undefined
+            value:undefined,
+            current:undefined,
+            isFusing:true,
+            isSwitchLoaded:false
         };
         this.allEchart = [];
         this.allKey = [];
         this.generateAllEchart = this.generateAllEchart.bind(this);
+        this.changeFusing = this.changeFusing.bind(this);
     }
 
-
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.params.id !== this.props.params.id){
+            this.setState({
+                value:[]
+            },this.onChange([]));
+            this.setState({
+                current:undefined
+            })
+        }
+    }
     componentWillMount() {
         let instance = this;
-        axios.get('http://' + getBackendServerIp() + '/getmeterlist').then(function (response) {
-            let res = JSON.parse(response.request.responseText);
-            instance.dataAvailable = res;
+        if (!isUpdated()){
+            init(getBackendServerIp(),function () {
+                instance.dataAvailable = getMeterDataList();
+                instance.setState({
+                    isLoaded: true
+                });
+            });
+        } else {
+            instance.dataAvailable = getMeterDataList();
             instance.setState({
                 isLoaded: true
             });
-        }).catch(function (error) {
-            // throw error
-        });
+        }
     }
 
     onChange = (value,title) => {
         this.allKey = [];
         for (let i = 0; i < value.length;i++){
-            let key = value[i].split('=>')[4];
+            let key = value[i].split('=>')[1];
             this.allKey.push(key);
         }
         this.allKey.sort();
         this.generateAllEchart();
         this.setState({ value });
+    };
+
+    handleClick = (e) => {
+        let defaultValue=[];
+        this.setState({
+            current: e.key,
+        });
+        let selectKeys = e.key.split('-');
+        this.dataAvailable[selectKeys[0]].server[selectKeys[1]].childService[selectKeys[2]].func[selectKeys[3]].index.map(a =>
+        defaultValue.push(a.name + "=>" + a.key));
+        let finalValue = [];
+        let defaultMeterValue=getDefaultMeterValue();
+        for (let i =0;i < defaultMeterValue.length;i ++){
+            finalValue.push(defaultValue[defaultMeterValue[i]]);
+        }
+        this.setState({
+            value:finalValue
+        },this.onChange(finalValue))
     };
 
     generateAllEchart() {
@@ -77,7 +116,8 @@ export class GraphController extends React.Component {
                                     serviceName: serviceName,
                                     fullName: fullName,
                                     ipAddress:ipAddress,
-                                    childServiceName:childServiceName
+                                    childServiceName:childServiceName,
+                                    key:func.index[m].key
                                 };
                                 this.allEchart.push(chart);
                             }
@@ -89,52 +129,99 @@ export class GraphController extends React.Component {
         }
     }
 
-    render() {
-        if (this.state.isLoaded) {
-            this.generateAllEchart();
-            this.setState({
-                isLoaded: false
-            });
-        }
-        return (
+    getFusingStatus(){
 
-            <div >
-                <view style={{flex: 1, backgroundColor: 'powderblue'}} >
+    }
+
+    changeFusing(value){
+        console.log(value);
+        console.log(this.antSwitch);
+    }
+
+    createMenu(){
+        if (this.state.isLoaded){
+            // this.setState({
+            //     isLoaded: false
+            // });
+            return (this.dataAvailable[this.props.params.id].server.map(b =>
+                            <SubMenu title={<span className="nav-text"><Icon type="setting" />{'Server ' + b.ip + '      ┃     '} <SwitchController serviceName={this.dataAvailable[this.props.params.id].name} remoteServerIP={b.ip} checkedChildren="开" unCheckedChildren="关" key = {'sw'+b.key} /> </span>} key={b.key} >
+                                {b.childService.map(c=>
+                                    <MenuItemGroup title={<span className="nav-text">{c.name}</span>} key={c.key} >
+                                        {c.func.map(d=>
+                                            <Menu.Item  key={d.key}>
+                                                <span className="nav-text">{d.name}</span>
+                                            </Menu.Item>
+                                        )}
+                                    </MenuItemGroup>
+                                )}
+                            </SubMenu>)
+                )
+
+        }
+        return (null)
+    }
+    renderTreeSelect(){
+        if (this.state.current === undefined){
+            return ( <br />);
+        } else {
+            let selectKeys = this.state.current.split('-');
+            return (
+                <view>
                     <br /><br />
                     <TreeSelect
                         showSearch
-                        style={{ width: '80%', alignItems: 'center'}}
+                        style={{ width: '60%', alignItems: 'center'}}
                         value={this.state.value}
-                        dropdownStyle={{ maxHeight: 960, overflow: 'auto' }}
+                        dropdownStyle={{ maxHeight: 480, overflow: 'auto' }}
                         placeholder="Please select"
                         allowClear
                         multiple
                         treeDefaultExpandAll
                         onChange={this.onChange}
                     >
-                        {this.dataAvailable.map(a =>
-                        <TreeNode value = {a.name} title={a.name} key={a.key} treeCheckable={'true'}>
-                            {a.server.map(b =>
-                            <TreeNode value = {b.ip} title={b.ip} key={b.key} treeCheckable={'true'}>
-                                {b.childService.map(c=>
-                                    <TreeNode value = {b.ip +"-"+ c.name} title={c.name} key={c.key} treeCheckable={'true'}>
-                                        {c.func.map(d=>
-                                            <TreeNode value = {b.ip +"-"+ c.name + "-"+d.name} title={d.name} key={d.key} treeCheckable={'true'}>
-                                                {d.index.map(e=>
-                                                    <TreeNode value = {b.ip +"=>"+ c.name + "=>"+d.name+"=>"+e.name + "=>" + e.key} title={e.name} key={e.key} treeCheckable={'true'} />
-                                                )}
-                                            </TreeNode>
-                                        )}
-                                    </TreeNode>
-                                )}
-                            </TreeNode>)}
-                        </TreeNode>
+                        {this.dataAvailable[selectKeys[0]].server[selectKeys[1]].childService[selectKeys[2]].func[selectKeys[3]].index.map(a =>
+                            <TreeNode value = {a.name + "=>" + a.key} title={a.name} key={a.key} treeCheckable={'true'}>
+                                {/*{a.index.map(b =>*/}
+                                    {/*<TreeNode value = {b.ip} title={b.ip} key={b.key} treeCheckable={'true'}>*/}
+                                        {/*{b.childService.map(c=>*/}
+                                            {/*<TreeNode value = {b.ip +"-"+ c.name} title={c.name} key={c.key} treeCheckable={'true'}>*/}
+                                                {/*{c.func.map(d=>*/}
+                                                    {/*<TreeNode value = {b.ip +"-"+ c.name + "-"+d.name} title={d.name} key={d.key} treeCheckable={'true'}>*/}
+                                                        {/*{d.index.map(e=>*/}
+                                                            {/*<TreeNode value = {b.ip +"=>"+ c.name + "=>"+d.name+"=>"+e.name + "=>" + e.key} title={e.name} key={e.key} treeCheckable={'true'} />*/}
+                                                        {/*)}*/}
+                                                    {/*</TreeNode>*/}
+                                                {/*)}*/}
+                                            {/*</TreeNode>*/}
+                                        {/*)}*/}
+                                    {/*</TreeNode>)}*/}
+                            </TreeNode>
                         )}
                     </TreeSelect>
                     <br /><br />
                 </view>
+            )
+        }
+    }
+    render() {
+        if (this.state.isLoaded) {
+            this.generateAllEchart();
+        }
+        console.log(this.state.isFusing);
+        return (
+            <div >
+                <Menu
+                    onClick={this.handleClick}
+                    selectedKeys={[this.state.current]}
+                    mode="horizontal"
+                    className={'ant-layout-sider-collapsed'}
+                >
+                    {this.createMenu()}
+                </Menu>
+                {this.renderTreeSelect()}
+                <Row gutter={24}>
                 {this.allEchart.map(d =>
-                    <Echarts
+                    <Echarts key={d.key}
                     graphiteServerIP={d.graphiteServerIP}
                     askFormat={d.askFormat}
                     targetFuncName={d.targetFuncName}
@@ -143,6 +230,7 @@ export class GraphController extends React.Component {
                     fullName={d.fullName}
                     />)
                 }
+                </Row>
             </div>
 
         )

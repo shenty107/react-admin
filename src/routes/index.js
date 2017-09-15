@@ -56,7 +56,7 @@ export default class CRouter extends Component {
                             <Route path={'asynchronousTable'} components={AsynchronousTable} />
                         </Route>
                         <Route path={'chart'}>
-                            <Route path={'echarts'} component={GraphController} />
+                            <Route path={'echarts/:id'} component={GraphController} />
                             <Route path={'recharts'} component={Recharts} />
                         </Route>
                         <Route path={'ui'}>
