@@ -15,6 +15,7 @@ export class SwitchController extends React.Component {
         this.prefix = '';
         this.getFusingStatus = this.getFusingStatus.bind(this);
         this.onChange = this.onChange.bind(this);
+        this.tick = this.tick.bind(this);
     }
     componentWillMount() {
         let servicePrefix = getServerPrefix();
@@ -28,7 +29,15 @@ export class SwitchController extends React.Component {
     }
 
     componentDidMount() {
+        this.interval = setInterval(this.tick, 10000);
+    }
 
+    componentWillUnmount() {
+        clearInterval(this.interval);
+    }
+
+    tick(){
+        this.getFusingStatus();
     }
 
     getFusingStatus(){
@@ -95,7 +104,7 @@ export class SwitchController extends React.Component {
                 size={'default'}
                 className={'Switch'}
                 key={this.props.remoteServerIP}
-            >
+                >
                     <br />
             </Switch>);
         }

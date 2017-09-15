@@ -4,6 +4,7 @@ import ReactEcharts from 'echarts-for-react';
 import echarts from 'echarts';
 import PropTypes from 'prop-types';
 import {Spin} from 'antd';
+import {getValueFormat} from "../../utils/constants";
 
 class GraphiteChart extends React.Component {
     constructor(props) {
@@ -23,7 +24,8 @@ class GraphiteChart extends React.Component {
                 trigger: 'axis',
                 position: function (pt) {
                     return [pt[0], '10%'];
-                }
+                },
+                formatter:'null',
             },
             title: {
                 left: 'center',
@@ -195,11 +197,29 @@ class GraphiteChart extends React.Component {
     update() {
         let instance = this;
         this.getMeterData(function () {
+            let tempFormat = getValueFormat();
+            let format = [];
+
+            for (let i =0;i < tempFormat.length; i++){
+                if (tempFormat[i].index === instance.props.detailName){
+                    format = tempFormat[i];
+                    break;
+                }
+            }
             let tempOption = instance.drawOption;
+
+            tempOption.tooltip.formatter = function (params) {
+                let res = [];
+                for (let i = 0, l = params.length; i < l; i++) {
+                    res += format.name + ' : ' + params[i].value + format.format;
+                }
+                return res;
+            };
+
             tempOption.xAxis.data = instance.date;
             tempOption.series[0].data = instance.data;
-            tempOption.title.text = [instance.props.targetFuncName, instance.props.detailName].join(' - ');
-            tempOption.series.name = instance.props.detailName;
+            tempOption.title.text = [instance.props.targetFuncName, format.name].join(' - ');
+            tempOption.series.name = format.name;
             if (instance.Echarts!==undefined){
                 tempOption.dataZoom = instance.Echarts.getOption().dataZoom;
             }
