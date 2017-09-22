@@ -14,7 +14,7 @@ class GraphiteChart extends React.Component {
         this.state = {
             timeFrom: '-15min',
             timeUntil: '',
-            flashTime: 30000,
+            freshTime: 30000,
             loading: true,
         };
         this.data = [];
@@ -107,7 +107,7 @@ class GraphiteChart extends React.Component {
 
     componentDidMount() {
         this.update();
-        this.interval = setInterval(this.tick, this.state.flashTime);
+        this.interval = setInterval(this.tick, this.state.freshTime);
     }
 
     componentWillUnmount() {
@@ -117,6 +117,7 @@ class GraphiteChart extends React.Component {
     tick() {
         this.update();
     }
+
 
     onRestore(parma, eChart) {
         this.update();

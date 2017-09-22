@@ -3,7 +3,8 @@ import Echarts from "./Echarts";
 import {getBackendServerIp, getDefaultMeterValue} from "../../utils/constants";
 import { TreeSelect,Row } from 'antd';
 import {init,getMeterDataList,isUpdated} from "../../utils/index";
-import { Menu, Icon,Switch } from 'antd';
+import { Menu, Icon } from 'antd';
+import PropTypes from 'prop-types';
 import {SwitchController} from "../switch/SwitchController";
 const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.ItemGroup;
@@ -23,19 +24,8 @@ export class GraphController extends React.Component {
         this.allEchart = [];
         this.allKey = [];
         this.generateAllEchart = this.generateAllEchart.bind(this);
-        this.changeFusing = this.changeFusing.bind(this);
     }
 
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.params.id !== this.props.params.id){
-            this.setState({
-                value:[]
-            },this.onChange([]));
-            this.setState({
-                current:undefined
-            })
-        }
-    }
     componentWillMount() {
         let instance = this;
         if (!isUpdated()){
@@ -50,6 +40,25 @@ export class GraphController extends React.Component {
             instance.setState({
                 isLoaded: true
             });
+        }
+        if(this.props.innerPage){
+            let tempKey = {
+              key: this.props.targetFunc.split(' ')[1]
+            };
+            this.handleClick(tempKey);
+        }
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (this.props.innerPage){
+
+        } else if (nextProps.params.id !== this.props.params.id){
+            this.setState({
+                value:[]
+            },this.onChange([]));
+            this.setState({
+                current:undefined
+            })
         }
     }
 
@@ -129,14 +138,6 @@ export class GraphController extends React.Component {
         }
     }
 
-    getFusingStatus(){
-
-    }
-
-    changeFusing(value){
-        console.log(value);
-        console.log(this.antSwitch);
-    }
 
     createMenu(){
         if (this.state.isLoaded){
@@ -144,11 +145,11 @@ export class GraphController extends React.Component {
             //     isLoaded: false
             // });
             return (this.dataAvailable[this.props.params.id].server.map(b =>
-                            <SubMenu title={<span className="nav-text"><Icon type="setting" />{'Server ' + b.ip + '      ┃     '} <SwitchController serviceName={this.dataAvailable[this.props.params.id].name} remoteServerIP={b.ip} checkedChildren="开" unCheckedChildren="关" key = {'sw'+b.key} /> </span>} key={b.key} >
+                            <SubMenu title={<span className="nav-text"><Icon type="setting" />{'Server ' + b.ip } <span className="ant-divider" /> <SwitchController serviceName={this.dataAvailable[this.props.params.id].name} remoteServerIP={b.ip} checkedChildren="开" unCheckedChildren="关" key = {'sw'+b.key} /> </span>} key={b.key} >
                                 {b.childService.map(c=>
                                     <MenuItemGroup title={<span className="nav-text">{c.name}</span>} key={c.key} >
                                         {c.func.map(d=>
-                                            <Menu.Item  key={d.key}>
+                                            <Menu.Item key={d.key}>
                                                 <span className="nav-text">{d.name}</span>
                                             </Menu.Item>
                                         )}
@@ -170,7 +171,7 @@ export class GraphController extends React.Component {
                     <br /><br />
                     <TreeSelect
                         showSearch
-                        style={{ width: '60%', alignItems: 'center'}}
+                        style={{ width: '90%', alignItems: 'center'}}
                         value={this.state.value}
                         dropdownStyle={{ maxHeight: 480, overflow: 'auto' }}
                         placeholder="Please select"
@@ -207,33 +208,61 @@ export class GraphController extends React.Component {
         if (this.state.isLoaded) {
             this.generateAllEchart();
         }
-        console.log(this.state.isFusing);
-        return (
-            <div >
-                <Menu
-                    onClick={this.handleClick}
-                    selectedKeys={[this.state.current]}
-                    mode="horizontal"
-                    className={'ant-layout-sider-collapsed'}
-                >
-                    {this.createMenu()}
-                </Menu>
-                {this.renderTreeSelect()}
-                <Row gutter={24}>
-                {this.allEchart.map(d =>
-                    <Echarts key={d.key}
-                    graphiteServerIP={d.graphiteServerIP}
-                    askFormat={d.askFormat}
-                    targetFuncName={d.targetFuncName}
-                    detailName={d.detailName}
-                    serviceName={d.serviceName}
-                    fullName={d.fullName}
-                    />)
-                }
-                </Row>
-            </div>
+        // console.log(this.state.isFusing);
+        if (this.props.innerPage){
+            return (
+                <div>
+                    {this.renderTreeSelect()}
+                    <Row gutter={24}>
+                        {this.allEchart.map(d =>
+                            <Echarts key={d.key}
+                                     graphiteServerIP={d.graphiteServerIP}
+                                     askFormat={d.askFormat}
+                                     targetFuncName={d.targetFuncName}
+                                     detailName={d.detailName}
+                                     serviceName={d.serviceName}
+                                     fullName={d.fullName}
+                                     targetWidth={24}
+                            />)
+                        }
+                    </Row>
+                </div>
+            )
+        } else {
+            return (
+                <div >
+                    <Menu
+                        onClick={this.handleClick}
+                        selectedKeys={[this.state.current]}
+                        mode="horizontal"
+                        className={'ant-layout-sider-collapsed'}
+                    >
+                        {this.createMenu()}
+                    </Menu>
+                    {this.renderTreeSelect()}
+                    <Row gutter={24}>
+                        {this.allEchart.map(d =>
+                            <Echarts key={d.key}
+                                     graphiteServerIP={d.graphiteServerIP}
+                                     askFormat={d.askFormat}
+                                     targetFuncName={d.targetFuncName}
+                                     detailName={d.detailName}
+                                     serviceName={d.serviceName}
+                                     fullName={d.fullName}
+                            />)
+                        }
+                    </Row>
+                </div>
 
-        )
+            )
+        }
     }
 
 }
+GraphController.propTypes = {
+    innerPage:PropTypes.bool,
+    targetFunc:PropTypes.string
+};
+GraphController.defaultProps = {
+    innerPage:false
+};

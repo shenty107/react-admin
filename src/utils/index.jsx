@@ -5,6 +5,7 @@
 import axios from 'axios';
 
 let meterDataList = [];
+let summaryData = [];
 let updated = false;
 
 export const queryString = () => {
@@ -30,7 +31,7 @@ export const isUpdated = () => {
 };
 
 export const init = (ipAddress,callback) => {
-    axios.get('http://' + ipAddress + '/getmeterlist').then(function (response) {
+    axios.get   ('http://' + ipAddress + '/getmeterlist').then(function (response) {
         meterDataList = JSON.parse(response.request.responseText);
         updated = true;
         callback();
@@ -38,6 +39,20 @@ export const init = (ipAddress,callback) => {
         // throw error
     });
 };
+
+export const syncSummary = (ipAddress,callback) => {
+    axios.get('http://' + ipAddress + '/getsummarydata').then(function (response) {
+        summaryData = JSON.parse(response.request.responseText);
+        callback(summaryData);
+    }).catch(function (error) {
+        return false;
+    });
+};
+
 export const getMeterDataList = () => {
     return meterDataList;
+};
+
+export const getSummary = () => {
+    return summaryData;
 };

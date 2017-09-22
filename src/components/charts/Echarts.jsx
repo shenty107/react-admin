@@ -52,9 +52,9 @@ class Echarts extends React.Component {
     generateGraph(){
         return (
 
-                <Col className="gutter-row" md={12}>
+                <Col className="gutter-row" span={this.props.targetWidth}>
                     <div className="gutter-box">
-                        <Card title={this.props.serviceName} bordered={'true'} extra=
+                        <Card  bordered={'true'} extra=
                             {
                                 <Dropdown overlay={this.menu}>
                                     <Button>
@@ -94,7 +94,8 @@ Echarts.propTypes = {
     targetFuncName: PropTypes.string,
     detailName: PropTypes.string,
     serviceName: PropTypes.string,
-    fullName: PropTypes.string
+    fullName: PropTypes.string,
+    targetWidth:PropTypes.number
 };
 Echarts.defaultProps = {
     graphiteServerIP: '127.0.0.1',
@@ -102,6 +103,7 @@ Echarts.defaultProps = {
     targetFuncName: 'test',
     detailName: 'testCount',
     serviceName: 'com.qunhe.test',
-    fullName: 'Graphite.local.com.qunhe.test.test.testCount'
+    fullName: 'Graphite.local.com.qunhe.test.test.testCount',
+    targetWidth:12
 };
 export default Echarts;

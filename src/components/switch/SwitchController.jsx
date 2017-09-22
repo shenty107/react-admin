@@ -95,8 +95,8 @@ export class SwitchController extends React.Component {
             );
         } else {
             return(
-                <Switch
-                    disabled={true}
+                <Switch// eslint-disable-next-line
+                disabled={true}
                 checkedChildren={this.props.checkedChildren}
                 unCheckedChildren={this.props.unCheckedChildren}
                 checked={this.state.checked}
@@ -106,7 +106,7 @@ export class SwitchController extends React.Component {
                 key={this.props.remoteServerIP}
                 >
                     <br />
-            </Switch>);
+                </Switch>);
         }
     }
 }

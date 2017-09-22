@@ -38,7 +38,8 @@ class App extends Component {
     render() {
         console.log(this.props.auth);
         console.log(this.props.responsive);
-        const { auth, router, responsive } = this.props;
+        // const { auth, router, responsive } = this.props;
+        const { responsive } = this.props;
         return (
             <Layout className="ant-layout-has-sider">
                 {!responsive.data.isMobile && <SiderCustom path={this.props.location.pathname} collapsed={this.state.collapsed} />}
@@ -46,9 +47,7 @@ class App extends Component {
                 <Content style={{ margin: '0 16px', overflow: 'initial' }}>
                   {this.props.children}
                 </Content>
-                <Footer style={{ textAlign: 'center' }}>
-                  React-Admin ©2017 Created by xiuran
-                </Footer>
+
               </Layout>
                 {
                     responsive.data.isMobile && (   // 手机端对滚动很慢的处理

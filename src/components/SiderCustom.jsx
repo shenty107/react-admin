@@ -2,10 +2,12 @@
  * Created by hao.cheng on 2017/4/13.
  */
 import React, { Component } from 'react';
-import { Layout, Menu, Icon,Switch,Card,Dropdown} from 'antd';
+import { Layout, Menu, Icon ,Button} from 'antd';
 import { Link } from 'react-router';
 import {init,getMeterDataList,isUpdated} from "../utils/index";
 import {getBackendServerIp} from "../utils/constants";
+import Buttons from "./ui/Buttons";
+import {ServerTabs} from "./dashboard/ServerTabs";
 const { Sider } = Layout;
 const SubMenu = Menu.SubMenu;
 
@@ -48,7 +50,7 @@ class SiderCustom extends Component {
         this.setMenuOpen(this.props);
     }
     componentWillReceiveProps(nextProps) {
-        console.log(nextProps);
+        // console.log(nextProps);
         this.onCollapse(nextProps.collapsed);
         this.setMenuOpen(nextProps)
     }
@@ -85,15 +87,13 @@ class SiderCustom extends Component {
         if (this.state.isLoaded){
             return (
                 this.dataAvailable.map(a =>
-                    <SubMenu  title={a.name} key={a.key} >
+                    <SubMenu title={a.name} key={a.key} >
                         {a.server.map(b =>
                             <SubMenu title={b.ip} key={b.key} >
                                 {b.childService.map(c=>
                                     <SubMenu title={c.name} key={c.key} >
                                         {c.func.map(d=>
-                                            <Menu.Item title={d.name} key={d.key}>
-
-                                            </Menu.Item>
+                                            <Menu.Item title={d.name} key={d.key} />
                                         )}
                                     </SubMenu>
                                 )}
@@ -122,6 +122,7 @@ class SiderCustom extends Component {
             <Sider
                 trigger={null}
                 breakpoint="lg"
+                collapsible
                 collapsed={this.props.collapsed}
                 style={{overflowY: 'auto',
                     background: '#ffffff'}}
@@ -129,27 +130,27 @@ class SiderCustom extends Component {
                 <br />
 
                 <br />
-
-                <Menu
-                    onClick={this.menuClick}
-                    theme="light"
-                    mode={this.state.mode}
-                    selectedKeys={[this.state.selectedKey]}
-                    openKeys={[this.state.openKey]}
-                    onOpenChange={this.openMenu}
-                    defaultOpenKeys={['/app/chart']}
-                    className={'ant-layout-sider-collapsed'}
-                >
-                    <Menu.Item key="/app/dashboard/index">
-                        <Link to={'/app/dashboard/index'}><Icon type="appstore" /><span className="nav-text">Dashboard</span></Link>
-                    </Menu.Item>
-                    <SubMenu
-                        key="/app/chart"
-                        title={<span><Icon type="area-chart" /><span className="nav-text">服务列表</span></span>}
-                    >
-                        {this.createSummaryMenu()}
-                    </SubMenu>
-                </Menu>
+                <ServerTabs />
+                {/*<Menu*/}
+                    {/*onClick={this.menuClick}*/}
+                    {/*theme="light"*/}
+                    {/*mode={this.state.mode}*/}
+                    {/*selectedKeys={[this.state.selectedKey]}*/}
+                    {/*openKeys={[this.state.openKey]}*/}
+                    {/*onOpenChange={this.openMenu}*/}
+                    {/*defaultOpenKeys={['/app/chart']}*/}
+                    {/*className={'ant-layout-sider-collapsed'}*/}
+                {/*>*/}
+                    {/*<Menu.Item key="/app/dashboard/index">*/}
+                        {/*<Link to={'/app/dashboard/index'}><Icon type="appstore" /><span className="nav-text">Dashboard</span></Link>*/}
+                    {/*</Menu.Item>*/}
+                    {/*<SubMenu*/}
+                        {/*key="/app/chart"*/}
+                        {/*title={<span><Icon type="area-chart" /><span className="nav-text">服务列表</span></span>}*/}
+                    {/*>*/}
+                        {/*{this.createSummaryMenu()}*/}
+                    {/*</SubMenu>*/}
+                {/*</Menu>*/}
                 <style>
                     {`
                     #nprogress .spinner{
