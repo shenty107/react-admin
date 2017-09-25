@@ -2,11 +2,10 @@
  * Created by hao.cheng on 2017/4/13.
  */
 import React, { Component } from 'react';
-import { Layout, Menu, Icon ,Button} from 'antd';
+import { Layout, Menu} from 'antd';
 import { Link } from 'react-router';
 import {init,getMeterDataList,isUpdated} from "../utils/index";
 import {getBackendServerIp} from "../utils/constants";
-import Buttons from "./ui/Buttons";
 import {ServerTabs} from "./dashboard/ServerTabs";
 const { Sider } = Layout;
 const SubMenu = Menu.SubMenu;
@@ -125,7 +124,8 @@ class SiderCustom extends Component {
                 collapsible
                 collapsed={this.props.collapsed}
                 style={{overflowY: 'auto',
-                    background: '#ffffff'}}
+                    background: '#404040'}}
+                width={Math.round((window.innerWidth)*0.12)}
             >
                 <br />
 
@@ -151,14 +151,14 @@ class SiderCustom extends Component {
                         {/*{this.createSummaryMenu()}*/}
                     {/*</SubMenu>*/}
                 {/*</Menu>*/}
-                <style>
-                    {`
-                    #nprogress .spinner{
-                        left: ${this.state.collapsed ? '70px' : '206px'};
-                        right: 0 !important;
-                    }
-                    `}
-                </style>
+                {/*<style>*/}
+                    {/*{`*/}
+                    {/*#nprogress .spinner{*/}
+                        {/*left: ${this.state.collapsed ? '70px' : '240px'};*/}
+                        {/*right: 0 !important;*/}
+                    {/*}*/}
+                    {/*`}*/}
+                {/*</style>*/}
             </Sider>
         )
     }

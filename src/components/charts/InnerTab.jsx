@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Card,Button,Tabs,Breadcrumb,Spin } from 'antd';
+import { Card,Tabs,Spin } from 'antd';
 import {getMeterDataList, getSummary} from "../../utils/index";
 import PropTypes from 'prop-types';
 import {Histogram} from "./Histogram";
@@ -71,12 +71,14 @@ export class InnerTab extends Component {
                                     <RadioButton value="b" disabled={panes[i].nameData.length!==4}>具体监控图</RadioButton>
                                 </RadioGroup>
                                 <div style={{minHeight:window.innerHeight*0.85.toString()+'px',maxHeight:window.innerHeight*0.85.toString()+'px',overflow: 'scroll'}}>
-                                <GraphController innerPage targetFunc={panes[i].key} />
+                                    <GraphController innerPage targetFunc={panes[i].key} nav={panes[i].nameData.join(" > ")} />
                                 </div>
                             </Card>
                         )
                     }
                 }
+                break;
+            default:
                 break;
         }
         this.setState({

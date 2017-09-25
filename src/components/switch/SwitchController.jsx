@@ -90,7 +90,6 @@ export class SwitchController extends React.Component {
                     className={'Switch'}
                     key={this.props.remoteServerIP}
                 >
-                    <br />
                 </Switch>
             );
         } else {
@@ -105,7 +104,6 @@ export class SwitchController extends React.Component {
                 className={'Switch'}
                 key={this.props.remoteServerIP}
                 >
-                    <br />
                 </Switch>);
         }
     }

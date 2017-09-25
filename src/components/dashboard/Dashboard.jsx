@@ -3,15 +3,14 @@
  */
 import React from 'react';
 import {Card, Col, Layout, Row} from 'antd';
-import { Menu, Icon, Button } from 'antd';
 import EchartsForce from "../charts/EchartsForce";
 import {getBackendServerIp} from "../../utils/constants";
 import {InnerTab} from "../charts/InnerTab";
-import {ServerTabs} from "./ServerTabs";
-const SubMenu = Menu.SubMenu;
-const { Header, Content, Sider } = Layout;
-const CustomizedSider = (props) => <Sider {...props} />
+
+const {Header, Content, Sider} = Layout;
+const CustomizedSider = (props) => <Sider {...props} />;
 CustomizedSider.__ANT_LAYOUT_SIDER = true;
+
 class Dashboard extends React.Component {
 
     constructor(props) {
@@ -19,7 +18,7 @@ class Dashboard extends React.Component {
         this.state = {
             isLoaded: true,
             isDetailView: false,
-            rightSiderCollapsed:true,
+            rightSiderCollapsed: true,
         };
         this.onClick = this.onClick.bind(this);
         this.handleClick = this.handleClick.bind(this);
@@ -49,20 +48,20 @@ class Dashboard extends React.Component {
         this.add = func;
     }
 
-    onCollapse(rightSiderCollapsed){
+    onCollapse(rightSiderCollapsed) {
         this.setState({rightSiderCollapsed});
     }
 
     render() {
-        let width = window.innerWidth*0.48;
+        let width = window.innerWidth * 0.48;
         if (this.state.rightSiderCollapsed) {
             return (
                 <Layout>
-                    <Header className="header" style={{height:16 ,backgroundColor:'#ECECEC'}}>
+                    <Header className="header" style={{height: 16, backgroundColor: '#ECECEC'}}>
                         <div />
                     </Header>
-                    <Layout style={{ padding: '0 0px 0px' }}>
-                        <Content style={{ padding: 0, margin: 0, minHeight: 280 }}>
+                    <Layout style={{padding: '0 0px 0px'}}>
+                        <Content style={{padding: 0, margin: 0, minHeight: 280}}>
                             <Row gutter={16}>
                                 <Col span={24}>
                                     <Card>
@@ -80,7 +79,7 @@ class Dashboard extends React.Component {
                             collapsible
                             reverseArrow
                             width={20}
-                            style={{backgroundColor:'#ECECEC', marginTop: -16}}
+                            style={{backgroundColor: '#ECECEC', marginTop: -16}}
                         >
                             <InnerTab visible={false} passAddFunc={this.getTabAddFunc} parentObject={this} />
                         </CustomizedSider>
@@ -90,11 +89,11 @@ class Dashboard extends React.Component {
         } else {
             return (
                 <Layout>
-                    <Header className="header" style={{height:16 ,backgroundColor:'#ECECEC'}}>
+                    <Header className="header" style={{height: 16, backgroundColor: '#ECECEC'}}>
                         <div />
                     </Header>
-                    <Layout style={{ padding: '0 0px 0px' }}>
-                        <Content style={{ padding: 0, margin: 0, minHeight: 280}}>
+                    <Layout style={{padding: '0 0px 0px'}}>
+                        <Content style={{padding: 0, margin: 0, minHeight: 280}}>
                             <Row gutter={16}>
                                 <Col span={24}>
                                     <Card>
@@ -107,7 +106,7 @@ class Dashboard extends React.Component {
                             </Row>
                         </Content>
                         <CustomizedSider
-                            style={{backgroundColor:'#ECECEC',marginLeft:16}}
+                            style={{backgroundColor: '#ECECEC', marginLeft: 16}}
                             collapsed={this.state.rightSiderCollapsed}
                             onCollapse={this.onCollapse}
                             collapsible
@@ -118,7 +117,7 @@ class Dashboard extends React.Component {
                                 passAddFunc={this.getTabAddFunc}
                                 parentObject={this}
                                 show
-                                style={{backgroundColor:'#ECECEC'}}
+                                style={{backgroundColor: '#ECECEC'}}
                             />
                         </CustomizedSider>
                     </Layout>

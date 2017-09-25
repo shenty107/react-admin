@@ -31,7 +31,7 @@ export const isUpdated = () => {
 };
 
 export const init = (ipAddress,callback) => {
-    axios.get   ('http://' + ipAddress + '/getmeterlist').then(function (response) {
+    axios.get ('http://' + ipAddress + '/getmeterlist').then(function (response) {
         meterDataList = JSON.parse(response.request.responseText);
         updated = true;
         callback();

@@ -212,7 +212,7 @@ class GraphiteChart extends React.Component {
             tempOption.tooltip.formatter = function (params) {
                 let res = [];
                 for (let i = 0, l = params.length; i < l; i++) {
-                    res += format.name + ' : ' + params[i].value + format.format;
+                    res += params[i].axisValue + '<br />' + format.name + ' : ' + params[i].value + format.format;
                 }
                 return res;
             };

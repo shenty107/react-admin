@@ -223,6 +223,7 @@ export class GraphController extends React.Component {
                                      serviceName={d.serviceName}
                                      fullName={d.fullName}
                                      targetWidth={24}
+                                     nav={this.props.nav}
                             />)
                         }
                     </Row>
@@ -261,7 +262,8 @@ export class GraphController extends React.Component {
 }
 GraphController.propTypes = {
     innerPage:PropTypes.bool,
-    targetFunc:PropTypes.string
+    targetFunc:PropTypes.string,
+    nav:PropTypes.string,
 };
 GraphController.defaultProps = {
     innerPage:false

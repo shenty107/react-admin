@@ -5,7 +5,7 @@ import SiderCustom from './components/SiderCustom';
 import { receiveData } from './action';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-const { Content, Footer } = Layout;
+const { Content } = Layout;
 
 class App extends Component {
     state = {
@@ -19,7 +19,6 @@ class App extends Component {
         // fetchData({funcName: 'admin', stateName: 'auth'});
         this.getClientWidth();
         window.onresize = () => {
-            console.log('屏幕变化了');
             this.getClientWidth();
             // console.log(document.body.clientWidth);
         }
@@ -27,7 +26,6 @@ class App extends Component {
     getClientWidth = () => {    // 获取当前浏览器宽度并设置responsive管理响应式
         const { receiveData } = this.props;
         const clientWidth = document.body.clientWidth;
-        console.log(clientWidth);
         receiveData({isMobile: clientWidth <= 992}, 'responsive');
     };
     toggle = () => {
@@ -36,8 +34,6 @@ class App extends Component {
         });
     };
     render() {
-        console.log(this.props.auth);
-        console.log(this.props.responsive);
         // const { auth, router, responsive } = this.props;
         const { responsive } = this.props;
         return (

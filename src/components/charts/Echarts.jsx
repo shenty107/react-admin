@@ -54,7 +54,7 @@ class Echarts extends React.Component {
 
                 <Col className="gutter-row" span={this.props.targetWidth}>
                     <div className="gutter-box">
-                        <Card  bordered={'true'} extra=
+                        <Card title={this.props.nav} bordered={'true'} extra=
                             {
                                 <Dropdown overlay={this.menu}>
                                     <Button>
@@ -95,6 +95,7 @@ Echarts.propTypes = {
     detailName: PropTypes.string,
     serviceName: PropTypes.string,
     fullName: PropTypes.string,
+    nav: PropTypes.string,
     targetWidth:PropTypes.number
 };
 Echarts.defaultProps = {
@@ -104,6 +105,7 @@ Echarts.defaultProps = {
     detailName: 'testCount',
     serviceName: 'com.qunhe.test',
     fullName: 'Graphite.local.com.qunhe.test.test.testCount',
-    targetWidth:12
+    targetWidth:12,
+    nav:''
 };
 export default Echarts;
