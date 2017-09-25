@@ -1,6 +1,6 @@
 import React from 'react';
 import Echarts from "./Echarts";
-import {getBackendServerIp, getDefaultMeterValue} from "../../utils/constants";
+import {findDetailName, getBackendServerIp, getDefaultMeterValue} from "../../utils/constants";
 import { TreeSelect,Row } from 'antd';
 import {init,getMeterDataList,isUpdated} from "../../utils/index";
 import { Menu, Icon } from 'antd';
@@ -181,7 +181,7 @@ export class GraphController extends React.Component {
                         onChange={this.onChange}
                     >
                         {this.dataAvailable[selectKeys[0]].server[selectKeys[1]].childService[selectKeys[2]].func[selectKeys[3]].index.map(a =>
-                            <TreeNode value = {a.name + "=>" + a.key} title={a.name} key={a.key} treeCheckable={'true'}>
+                            <TreeNode value = {a.name + "=>" + a.key} title={findDetailName(a.name)} key={a.key} treeCheckable={'true'}>
                                 {/*{a.index.map(b =>*/}
                                     {/*<TreeNode value = {b.ip} title={b.ip} key={b.key} treeCheckable={'true'}>*/}
                                         {/*{b.childService.map(c=>*/}

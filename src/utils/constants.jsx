@@ -19,7 +19,7 @@ let serverPrefix =
 
 let valueFormat = [
     {
-        index: 'normal-rate', name: '正常调用率',
+        index: 'normal-rate', name: '健康率',
         format: '%'
     },
     {
@@ -112,3 +112,15 @@ export const getUserName = () => {
     return userName;
 };
 
+export const findDetailName = (input) => {
+    let temp = undefined;
+    valueFormat.forEach(function (element) {
+        if (element.index === input){
+            temp = element.name;
+        }
+    });
+    if (temp !== undefined){
+        return temp;
+    }
+    return input;
+};
