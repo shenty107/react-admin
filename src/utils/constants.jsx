@@ -1,4 +1,4 @@
-let backendServerIp = "10.1.13.131:8080/web-backend";
+let backendServerIp = "116.62.53.98:8080/web-backend";
 let defaultMeterValue = [0, 1, 2, 6, 7, 9]; //0-16
 let userName = 'Users';
 let serverPrefix =
@@ -8,7 +8,7 @@ let serverPrefix =
             prefix: '/dds/api'
         },
         {
-            name: 'DesignRenderService',
+            name: 'DiyRenderService',
             prefix: '/drs/api'
         },
         {
